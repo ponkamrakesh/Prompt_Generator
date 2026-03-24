@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="hero">
+    <div class="badge">✨ AI-Powered</div>
+    <h1>Transform Your Ideas Into <span class="gradient">Multiple Masterpieces</span></h1>
+    <p>Enter a rough concept. Get cinematic, professional, humorous variations—instantly.</p>
+</section>
+
+<section class="transform-section">
+    <form class="transform-form" method="post" action="/transform" id="transformForm">
+        <div class="input-group">
+            <textarea 
+                name="user_input" 
+                id="userInput"
+                placeholder="Enter your idea here... (e.g., 'Write about a drone coffee delivery startup')"
+                required
+                minlength="5"
+                maxlength="500"
+                rows="3"
+            >{{ original_input or '' }}</textarea>
+            <span class="char-count" id="charCount">0 / 500</span>
+        </div>
+
+        <div class="styles-selector">
+            <p class="label">Select Styles (max 3)</p>
+            <div class="style-chips">
+                <label class="chip">
+                    <input type="checkbox" name="style_cinematic" {% if not show_results %}checked{% endif %}>
+                    <span>🎬 Cinematic</span>
+                </label>
+                <label class="chip">
+                    <input type="checkbox" name="style_professional">
+                    <span>💼 Professional</span>
+                </label>
+                <label class="chip">
+                    <input type="checkbox" name="style_humorous">
+                    <span>😂 Humorous</span>
+                </label>
+                <label class="chip">
+                    <input type="checkbox" name="style_analytical">
+                    <span>🧠 Analytical</span>
+                </label>
+                <label class="chip">
+                    <input type="checkbox" name="style_storytelling">
+                    <span>📖 Storytelling</span>
+                </label>
+                <label class="chip">
+                    <input type="checkbox" name="style_poetic">
+                    <span>🎭 Poetic</span>
+                </label>
+                <label class="chip">
+                    <input type="checkbox" name="style_technical">
+                    <span>⚙️ Technical</span>
+                </label>
+                <label class="chip">
+                    <input type="checkbox" name="style_minimalist">
+                    <span>◾ Minimalist</span>
+                </label>
+            </div>
+        </div>
+
+        <div class="advanced">
+            <button type="button" class="toggle" id="toggleAdvanced">⚙️ Advanced Options</button>
+            <div class="content" id="advancedContent" hidden>
+                <input type="text" name="custom_persona" placeholder="Custom persona (e.g., Elon Musk, Shakespeare)" value="{{ custom_persona or '' }}">
+            </div>
+        </div>
+
+        <button type="submit" class="transform-btn" id="transformBtn">
+            <span class="ready">✨ Transform</span>
+            <span class="loading" hidden>
+                <span class="spinner"></span>
+                Alchemizing...
+            </span>
+        </button>
+    </form>
+</section>
+
+{% if error %}
+<div class="error">
+    <span>⚠️ {{ error }}</span>
+</div>
+{% endif %}
+
+{% if show_results %}
+<section class="results">
+    <div class="results-header">
+        <h2>Results</h2>
+        <div class="meta">
+            <span>{{ styles_count }} styles</span>
+            <span>{{ total_time }}s</span>
+        </div>
+    </div>
+    
+    <div class="results-grid">
+        {% for result in results %}
+        <article class="result-card">
+            <div class="card-header">
+                <span class="icon">
+                    {% if result.style == 'cinematic' %}🎬
+                    {% elif result.style == 'professional' %}💼
+                    {% elif result.style == 'humorous' %}😂
+                    {% elif result.style == 'analytical' %}🧠
+                    {% elif result.style == 'storytelling' %}📖
+                    {% elif result.style == 'poetic' %}🎭
+                    {% elif result.style == 'technical' %}⚙️
+                    {% elif result.style == 'minimalist' %}◾
+                    {% else %}✨{% endif %}
+                </span>
+                <h3>{{ result.style|title }}</h3>
+                <span class="time">{{ result.processing_time }}s</span>
+            </div>
+            <div class="card-content">
+                <p>{{ result.content }}</p>
+            </div>
+            <div class="card-actions">
+                <button class="copy-btn" data-content="{{ result.content|e }}">📋 Copy</button>
+            </div>
+        </article>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+{% endblock %}
