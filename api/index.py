@@ -25,6 +25,11 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STATIC_DIR = os.path.join(BASE_DIR, "static")
 TEMPLATES_DIR = os.path.join(BASE_DIR, "templates")
 
+# Debug: Print paths to verify
+print(f"BASE_DIR: {BASE_DIR}")
+print(f"STATIC_DIR: {STATIC_DIR}")
+print(f"STATIC exists: {os.path.exists(STATIC_DIR)}")
+
 # Mount static files
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 templates = Jinja2Templates(directory=TEMPLATES_DIR)
