@@ -141,14 +141,16 @@ async def transform(
 ):
     start_time = time.time()
     
+    # Debug: Check API key
     if not GROQ_API_KEY:
         return templates.TemplateResponse("index.html", {
             "request": request,
             "show_results": False,
-            "error": "GROQ_API_KEY not configured",
+            "error": "ERROR: GROQ_API_KEY not configured in Vercel environment variables",
             "original_input": user_input
         })
     
+    # Collect selected styles
     selected = []
     if style_cinematic: selected.append("cinematic")
     if style_professional: selected.append("professional")
@@ -159,13 +161,20 @@ async def transform(
     if style_technical: selected.append("technical")
     if style_minimalist: selected.append("minimalist")
     
+    # Default if none selected
     if not selected:
         selected = ["cinematic", "professional", "storytelling"]
+    
     selected = selected[:MAX_STYLES]
+    
+    # Debug info
+    debug_info = f"Input: {user_input[:50]}... | Styles: {selected} | Persona: {custom_persona}"
+    print(f"DEBUG: {debug_info}")
     
     try:
         client = GroqClient()
         results = await client.transform(user_input, selected, custom_persona)
+        
         return templates.TemplateResponse("index.html", {
             "request": request,
             "show_results": True,
@@ -175,14 +184,18 @@ async def transform(
             "styles_count": len(selected),
             "custom_persona": custom_persona
         })
+        
     except Exception as e:
+        import traceback
+        error_detail = f"{str(e)}\n{traceback.format_exc()}"
+        print(f"ERROR: {error_detail}")
+        
         return templates.TemplateResponse("index.html", {
             "request": request,
             "show_results": False,
-            "error": str(e),
+            "error": f"Error: {str(e)}",
             "original_input": user_input
         })
-
 
 @app.get("/api/health")
 async def health():
