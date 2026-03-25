@@ -1,5 +1,5 @@
 """
-Prompt Alchemist - Final Working Version
+Prompt Alchemist - Upgraded High-Level Version
 """
 
 import os
@@ -8,88 +8,162 @@ import time
 import asyncio
 from typing import Optional, List
 
-# Fix import path
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 from fastapi import FastAPI, Request, Form
 from fastapi.responses import HTMLResponse, PlainTextResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 import aiohttp
 
-# App
+# =========================
+# APP SETUP
+# =========================
+
 app = FastAPI(title="Prompt Alchemist")
 
-# Paths
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STATIC_DIR = os.path.join(BASE_DIR, "static")
 TEMPLATES_DIR = os.path.join(BASE_DIR, "templates")
 
-# Mount static
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 templates = Jinja2Templates(directory=TEMPLATES_DIR)
 
-# Config
+# =========================
+# CONFIG
+# =========================
+
 GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
 GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
 DEFAULT_MODEL = "llama-3.1-8b-instant"
 MAX_STYLES = 3
 
-# Style prompts
+# =========================
+# ELITE STYLE PROMPTS
+# =========================
+
 STYLE_PROMPTS = {
-    "cinematic": (
-        "Transform the following content into a vivid, cinematic narrative. 
-        Use immersive descriptions, dynamic pacing, emotional depth, and strong visual imagery. 
-        Write as if it were a scene from a high-budget film, engaging the reader’s senses.\n\n{}"
-    ),
+    "cinematic": """You are an award-winning film director and screenwriter.
 
-    "professional": (
-        "Rewrite the following content in a formal, professional, and polished tone. 
-        Ensure clarity, precision, and structured communication suitable for business or expert contexts. 
-        Avoid slang and maintain a confident, authoritative voice.\n\n{}"
-    ),
+Transform the input into a cinematic scene with:
+- Rich sensory details (visual, sound, atmosphere)
+- Dramatic pacing and tension
+- Emotional depth
 
-    "humorous": (
-        "Rewrite the following content to be humorous, witty, and engaging. 
-        Incorporate clever wordplay, light sarcasm, or situational humor where appropriate, 
-        while keeping it coherent and relevant to the original meaning.\n\n{}"
-    ),
+Rules:
+- Show, don’t tell
+- Use present tense
+- Make it visually immersive
 
-    "analytical": (
-        "Analyze the following content with a logical and critical approach. 
-        Break down key ideas, identify assumptions, evaluate implications, and present clear reasoning. 
-        Use structured thinking and, if helpful, organize insights into bullet points.\n\n{}"
-    ),
+CONTENT:
+{}""",
 
-    "storytelling": (
-        "Transform the following content into a compelling story. 
-        Include a clear narrative arc (setup, conflict, resolution), engaging characters if applicable, 
-        and a natural flow that captures attention and evokes emotion.\n\n{}"
-    ),
+    "professional": """You are a senior business expert.
 
-    "poetic": (
-        "Rewrite the following content as expressive poetry. 
-        Use rhythm, metaphor, imagery, and creative language to evoke emotion and aesthetic depth. 
-        Maintain the essence of the original meaning while enhancing artistic expression.\n\n{}"
-    ),
+Rewrite with:
+- Formal, polished tone
+- Clear structure and logical flow
+- Concise and precise language
 
-    "technical": (
-        "Explain the following content in a highly technical and precise manner. 
-        Use domain-specific terminology, clear definitions, and structured explanations. 
-        Assume the reader has foundational knowledge of the subject.\n\n{}"
-    ),
+Rules:
+- No slang
+- Maintain authority and clarity
 
-    "minimalist": (
-        "Condense the following content into a concise and minimal form. 
-        Retain only the most essential information while eliminating redundancy.
-        Ensure clarity and brevity without losing meaning.\n\n{}"
-    )
+CONTENT:
+{}""",
+
+    "humorous": """You are a witty humor writer.
+
+Rewrite to be:
+- Clever and engaging
+- Lightly sarcastic or playful
+- Natural and not forced
+
+Rules:
+- Preserve meaning
+- Avoid offensive humor
+
+CONTENT:
+{}""",
+
+    "analytical": """You are a critical analyst.
+
+Analyze with:
+- Logical breakdown
+- Assumptions identification
+- Implication evaluation
+
+Output Format:
+- Key Points
+- Analysis
+- Insights
+- Conclusion
+
+CONTENT:
+{}""",
+
+    "storytelling": """You are a master storyteller.
+
+Transform into a narrative with:
+- Beginning, development, resolution
+- Engaging flow
+- Emotional connection
+
+Rules:
+- Maintain coherence
+- Use vivid but controlled language
+
+CONTENT:
+{}""",
+
+    "poetic": """You are a skilled poet.
+
+Rewrite using:
+- Rhythm and flow
+- Metaphors and imagery
+- Emotional depth
+
+Rules:
+- Preserve meaning
+- Be expressive and artistic
+
+CONTENT:
+{}""",
+
+    "technical": """You are a technical expert.
+
+Explain with:
+- Precise terminology
+- Structured breakdown
+- Clear definitions
+
+Output Format:
+- Overview
+- Detailed Explanation
+- Key Concepts
+
+Rules:
+- Assume knowledgeable reader
+
+CONTENT:
+{}""",
+
+    "minimalist": """You are an expert in concise communication.
+
+Condense into:
+- Essential information only
+- Clear and direct wording
+
+Rules:
+- Remove redundancy
+- Maximize information density
+
+CONTENT:
+{}"""
 }
-
 
 # =========================
 # GROQ CLIENT
 # =========================
+
 class GroqClient:
     def __init__(self):
         if not GROQ_API_KEY:
@@ -104,7 +178,7 @@ class GroqClient:
                 prompt = STYLE_PROMPTS.get(style, STYLE_PROMPTS["professional"]).format(content)
 
                 if persona:
-                    prompt = f"Write as {persona}.\n\n{prompt}"
+                    prompt = f"You are {persona}.\n\n{prompt}"
 
                 tasks.append(self._call_llm(session, style, prompt))
 
@@ -134,11 +208,17 @@ class GroqClient:
         payload = {
             "model": DEFAULT_MODEL,
             "messages": [
-                {"role": "system", "content": "Transform content exactly as requested."},
-                {"role": "user", "content": prompt}
+                {
+                    "role": "system",
+                    "content": "Follow the user's transformation instructions strictly. Do not add unrelated content."
+                },
+                {
+                    "role": "user",
+                    "content": prompt
+                }
             ],
             "temperature": 0.7,
-            "max_tokens": 800
+            "max_tokens": 900
         }
 
         timeout = aiohttp.ClientTimeout(total=30)
@@ -163,7 +243,6 @@ class GroqClient:
                         "processing_time": round(time.time() - start, 2)
                     }
 
-                # show real API error
                 return {
                     "style": style,
                     "content": f"Error {resp.status}: {text}",
@@ -176,7 +255,6 @@ class GroqClient:
                 "content": f"Failed: {str(e)}",
                 "processing_time": round(time.time() - start, 2)
             }
-
 
 # =========================
 # ROUTES
@@ -214,7 +292,6 @@ async def transform(
             "original_input": user_input
         })
 
-    # Collect styles
     selected = []
     if style_cinematic: selected.append("cinematic")
     if style_professional: selected.append("professional")
@@ -258,7 +335,6 @@ async def debug():
     return PlainTextResponse(f"""
 DEBUG INFO:
 API Key Present: {bool(GROQ_API_KEY)}
-API Key First 10 chars: {GROQ_API_KEY[:10] if GROQ_API_KEY else 'NONE'}
 BASE_DIR: {BASE_DIR}
 STATIC_DIR exists: {os.path.exists(STATIC_DIR)}
 TEMPLATES_DIR exists: {os.path.exists(TEMPLATES_DIR)}
