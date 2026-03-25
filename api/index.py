@@ -32,7 +32,7 @@ templates = Jinja2Templates(directory=TEMPLATES_DIR)
 # Config
 GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
 GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
-DEFAULT_MODEL = "gemma2-9b-it"
+DEFAULT_MODEL = "llama-3.1-8b-instant"
 MAX_STYLES = 3
 
 # Style prompts
