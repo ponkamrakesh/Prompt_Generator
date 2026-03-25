@@ -37,14 +37,53 @@ MAX_STYLES = 3
 
 # Style prompts
 STYLE_PROMPTS = {
-    "cinematic": "Make this cinematic and dramatic:\n{}",
-    "professional": "Convert to professional tone:\n{}",
-    "humorous": "Make this funny and witty:\n{}",
-    "analytical": "Analyze this logically:\n{}",
-    "storytelling": "Turn this into a story:\n{}",
-    "poetic": "Rewrite as poetry:\n{}",
-    "technical": "Explain technically:\n{}",
-    "minimalist": "Make it concise and minimal:\n{}"
+    "cinematic": (
+        "Transform the following content into a vivid, cinematic narrative. 
+        Use immersive descriptions, dynamic pacing, emotional depth, and strong visual imagery. 
+        Write as if it were a scene from a high-budget film, engaging the reader’s senses.\n\n{}"
+    ),
+
+    "professional": (
+        "Rewrite the following content in a formal, professional, and polished tone. 
+        Ensure clarity, precision, and structured communication suitable for business or expert contexts. 
+        Avoid slang and maintain a confident, authoritative voice.\n\n{}"
+    ),
+
+    "humorous": (
+        "Rewrite the following content to be humorous, witty, and engaging. 
+        Incorporate clever wordplay, light sarcasm, or situational humor where appropriate, 
+        while keeping it coherent and relevant to the original meaning.\n\n{}"
+    ),
+
+    "analytical": (
+        "Analyze the following content with a logical and critical approach. 
+        Break down key ideas, identify assumptions, evaluate implications, and present clear reasoning. 
+        Use structured thinking and, if helpful, organize insights into bullet points.\n\n{}"
+    ),
+
+    "storytelling": (
+        "Transform the following content into a compelling story. 
+        Include a clear narrative arc (setup, conflict, resolution), engaging characters if applicable, 
+        and a natural flow that captures attention and evokes emotion.\n\n{}"
+    ),
+
+    "poetic": (
+        "Rewrite the following content as expressive poetry. 
+        Use rhythm, metaphor, imagery, and creative language to evoke emotion and aesthetic depth. 
+        Maintain the essence of the original meaning while enhancing artistic expression.\n\n{}"
+    ),
+
+    "technical": (
+        "Explain the following content in a highly technical and precise manner. 
+        Use domain-specific terminology, clear definitions, and structured explanations. 
+        Assume the reader has foundational knowledge of the subject.\n\n{}"
+    ),
+
+    "minimalist": (
+        "Condense the following content into a concise and minimal form. 
+        Retain only the most essential information while eliminating redundancy.
+        Ensure clarity and brevity without losing meaning.\n\n{}"
+    )
 }
 
 
