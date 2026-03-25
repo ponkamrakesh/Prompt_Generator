@@ -1,0 +1,19 @@
+[33m478cb96[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m Remove secrets and ignore env files
+[33mebb2607[m New changes were made..
+[33m4b80bd2[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Update index.py
+[33m08d1747[m Update index.py
+[33md73a8f6[m Update vercel.json
+[33md5e3ff5[m Update base.html
+[33ma060fa6[m Update index.py
+[33mdd99fda[m Update vercel.json
+[33m41e315a[m Update base.html
+[33m7ffc8d8[m Create animations.css
+[33m9df7786[m Create main.js
+[33m1777fcb[m Create main.css
+[33mfe52cd4[m Create index.html
+[33m101c8ac[m Create base.html
+[33m0700698[m Create index.py
+[33m21e1b06[m Create __init__.py
+[33m7d9afe0[m Create vercel.json
+[33m9736274[m Create requirements.txt
+[33m28ed406[m Initial commit
