@@ -1,7 +1,7 @@
-# Prompt_Generator
-# Prompt Alchemist (Prompt Generator)
+# Multi-Style Content Generator
 
-Prompt Alchemist is a FastAPI web app that transforms one rough input into multiple high-quality writing variations (up to 3 at a time) using the Groq Chat Completions API.
+
+Multi-Style Content Generator is a FastAPI web app that transforms one rough input into multiple high-quality writing variations (up to 3 at a time) using the Groq Chat Completions API.
 
 It is designed for deployment on **Vercel** and includes a modern Jinja2 frontend with style selection, advanced persona input, and copy-to-clipboard result cards.
 
@@ -83,7 +83,7 @@ If no style is selected, the app defaults to:
 ## API Endpoints
 
 ### `GET /`
-Renders the main Prompt Alchemist UI.
+Renders the main Multi-Style Content Generator UI.
 
 ### `POST /transform`
 Processes user input and selected styles, then returns generated outputs in HTML.
